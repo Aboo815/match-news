@@ -385,4 +385,24 @@
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
+  <url>
+    <loc>https://www.footballant.com/match-news/matches/fc-macarthur-vs-wellington-phoenix-lineup-2026/</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.footballant.com/match-news/matches/fc-tokyo-vs-mito-hollyhock-lineup-2026/</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.footballant.com/match-news/matches/kashiwa-reysol-vs-kashima-antlers-lineup-2026/</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.footballant.com/match-news/matches/al-fateh-vs-al-khaleej-lineup-2026/</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
 </urlset>
