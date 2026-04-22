@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://news.footballant.com/sitemap.xml
+Sitemap: https://www.footballant.com/match-news/sitemap.xml
