@@ -1,41 +1,161 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+	  <url>
+	    <loc>https://www.footballant.com/match-news/</loc>
+	    <lastmod>2026-04-24</lastmod>
+	    <changefreq>daily</changefreq>
+	    <priority>1.0</priority>
+	  </url>
+	  <url>
+	    <loc>https://www.footballant.com/match-news/latest-football-lineup-predictions/</loc>
+	    <lastmod>2026-04-24</lastmod>
+	    <changefreq>daily</changefreq>
+	    <priority>0.9</priority>
+	  </url>
+	  <url>
+	    <loc>https://www.footballant.com/match-news/premier-league-lineup-predictions/</loc>
+	    <lastmod>2026-04-24</lastmod>
+	    <changefreq>daily</changefreq>
+	    <priority>0.9</priority>
+	  </url>
+	  <url>
+	    <loc>https://www.footballant.com/match-news/la-liga-lineup-predictions/</loc>
+	    <lastmod>2026-04-24</lastmod>
+	    <changefreq>daily</changefreq>
+	    <priority>0.9</priority>
+	  </url>
+	  <url>
+	    <loc>https://www.footballant.com/match-news/serie-a-lineup-predictions/</loc>
+	    <lastmod>2026-04-24</lastmod>
+	    <changefreq>daily</changefreq>
+	    <priority>0.9</priority>
+	  </url>
+	  <url>
+	    <loc>https://www.footballant.com/match-news/bundesliga-lineup-predictions/</loc>
+	    <lastmod>2026-04-24</lastmod>
+	    <changefreq>daily</changefreq>
+	    <priority>0.9</priority>
+	  </url>
   <url>
-    <loc>https://www.footballant.com/match-news/</loc>
-    <lastmod>2026-04-22</lastmod>
+    <loc>https://www.footballant.com/match-news/matches/fulham-vs-aston-villa-lineup-2026/</loc>
+    <lastmod>2026-04-24</lastmod>
     <changefreq>daily</changefreq>
-    <priority>1.0</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.footballant.com/match-news/latest-football-lineup-predictions/</loc>
-    <lastmod>2026-04-22</lastmod>
+    <loc>https://www.footballant.com/match-news/matches/west-ham-united-vs-everton-lineup-2026/</loc>
+    <lastmod>2026-04-24</lastmod>
     <changefreq>daily</changefreq>
-    <priority>0.9</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.footballant.com/match-news/premier-league-lineup-predictions/</loc>
-    <lastmod>2026-04-22</lastmod>
+    <loc>https://www.footballant.com/match-news/matches/heidenheimer-vs-st-pauli-lineup-2026/</loc>
+    <lastmod>2026-04-24</lastmod>
     <changefreq>daily</changefreq>
-    <priority>0.9</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.footballant.com/match-news/la-liga-lineup-predictions/</loc>
-    <lastmod>2026-04-22</lastmod>
+    <loc>https://www.footballant.com/match-news/matches/augsburg-vs-eintracht-frankfurt-lineup-2026/</loc>
+    <lastmod>2026-04-24</lastmod>
     <changefreq>daily</changefreq>
-    <priority>0.9</priority>
+    <priority>0.8</priority>
   </url>
-<url>
-  <loc>https://www.footballant.com/match-news/serie-a-lineup-predictions/</loc>
-  <lastmod>2026-04-22</lastmod>
-  <changefreq>daily</changefreq>
-  <priority>0.9</priority>
-</url>
-<url>
-  <loc>https://www.footballant.com/match-news/bundesliga-lineup-predictions/</loc>
-  <lastmod>2026-04-22</lastmod>
-  <changefreq>daily</changefreq>
-  <priority>0.9</priority>
-</url>
+  <url>
+    <loc>https://www.footballant.com/match-news/matches/atletico-madrid-vs-athletic-bilbao-lineup-2026/</loc>
+    <lastmod>2026-04-24</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.footballant.com/match-news/matches/vfl-wolfsburg-vs-borussia-monchengladbach-lineup-2026/</loc>
+    <lastmod>2026-04-24</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.footballant.com/match-news/matches/alaves-vs-mallorca-lineup-2026/</loc>
+    <lastmod>2026-04-24</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.footballant.com/match-news/matches/valencia-vs-girona-lineup-2026/</loc>
+    <lastmod>2026-04-24</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.footballant.com/match-news/matches/fc-koln-vs-bayer-leverkusen-lineup-2026/</loc>
+    <lastmod>2026-04-24</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.footballant.com/match-news/matches/hamburger-sv-vs-tsg-hoffenheim-lineup-2026/</loc>
+    <lastmod>2026-04-24</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.footballant.com/match-news/matches/wolves-vs-tottenham-hotspur-lineup-2026/</loc>
+    <lastmod>2026-04-24</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.footballant.com/match-news/matches/fsv-mainz-05-vs-bayern-munchen-lineup-2026/</loc>
+    <lastmod>2026-04-24</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.footballant.com/match-news/matches/getafe-vs-fc-barcelona-lineup-2026/</loc>
+    <lastmod>2026-04-24</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.footballant.com/match-news/matches/arsenal-vs-newcastle-united-lineup-2026/</loc>
+    <lastmod>2026-04-24</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.footballant.com/match-news/matches/liverpool-vs-crystal-palace-lineup-2026/</loc>
+    <lastmod>2026-04-24</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.footballant.com/match-news/matches/darmstadt-vs-sv-elversberg-lineup-2026/</loc>
+    <lastmod>2026-04-24</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.footballant.com/match-news/matches/cesena-vs-sampdoria-lineup-2026/</loc>
+    <lastmod>2026-04-24</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.footballant.com/match-news/matches/pescara-vs-juve-stabia-lineup-2026/</loc>
+    <lastmod>2026-04-24</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.footballant.com/match-news/matches/saint-etienne-vs-troyes-lineup-2026/</loc>
+    <lastmod>2026-04-24</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.footballant.com/match-news/matches/verona-vs-lecce-lineup-2026/</loc>
+    <lastmod>2026-04-24</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
   <url>
     <loc>https://www.footballant.com/match-news/matches/sunderland-afc-vs-nottingham-forest-lineup-2026/</loc>
     <lastmod>2026-04-22</lastmod>
