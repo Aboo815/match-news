@@ -5,9 +5,13 @@ require "json"
 require "time"
 require "fileutils"
 require "optparse"
+require "digest"
 
 DEFAULT_STATE_PATH = "/Users/aboo/Desktop/7-day-first-google-click/state/match-news-state.json"
 REPO_ROOT = File.expand_path("..", __dir__)
+PROJECT_ROOT = File.expand_path("../..", __dir__)
+PROJECT_RULES_PATH = File.join(PROJECT_ROOT, "PROJECT_RULES.md")
+ERROR_LESSONS_PATH = File.join(PROJECT_ROOT, "ERROR_LESSONS.md")
 MATCH_DIR = File.join(REPO_ROOT, "matches")
 
 SCORELINES = [
@@ -46,6 +50,36 @@ MAIN_PARAS = [
 def usage_and_exit(parser, code: 1)
   warn parser.to_s
   exit(code)
+end
+
+def read_required_doc(path)
+  raise "Missing required rules file: #{path}" unless File.exist?(path)
+
+  text = File.read(path)
+  raise "Required rules file is empty: #{path}" if text.strip.empty?
+
+  text
+end
+
+def announce_rule_docs
+  [
+    ["project_rules", PROJECT_RULES_PATH],
+    ["error_lessons", ERROR_LESSONS_PATH]
+  ].each do |label, path|
+    text = read_required_doc(path)
+    headings = text.lines.select { |line| line.start_with?("#") }.first(3).map { |line| line.delete_prefix("#").strip }
+    puts "- #{label}: #{path} sha256=#{Digest::SHA256.hexdigest(text)[0, 12]} headings=#{headings.join(' | ')}"
+  end
+end
+
+def required_base_time(value)
+  raise "Missing required --base-time" if value.to_s.strip.empty?
+
+  Time.iso8601(value).getlocal
+end
+
+def in_exact_window?(kickoff, base_time, min_hours: 48, max_hours: 72)
+  kickoff >= base_time + (min_hours * 3600) && kickoff <= base_time + (max_hours * 3600)
 end
 
 def html_escape(text)
@@ -236,7 +270,7 @@ def build_list_items(candidates, href_prefix:, position_start: 1)
   end.join("\n")
 end
 
-def update_latest_lists(repo_root, new_entries, max_items:)
+def update_latest_lists(repo_root, new_entries, max_items:, page_updated_date:)
   home_path = File.join(repo_root, "index.html")
   latest_path = File.join(repo_root, "latest-football-lineup-predictions", "index.html")
 
@@ -276,7 +310,7 @@ def update_latest_lists(repo_root, new_entries, max_items:)
 
   latest_html = latest_html.gsub(
     /<p class="note">Page updated [^<]*<\/p>/,
-    "<p class=\"note\">Page updated #{Time.now.strftime("%Y-%m-%d")}. The newest upcoming fixtures should stay near the top.</p>"
+    "<p class=\"note\">Page updated #{page_updated_date}. The newest upcoming fixtures should stay near the top.</p>"
   )
 
   write_file(home_path, home_html)
@@ -313,7 +347,8 @@ options = {
   state_path: DEFAULT_STATE_PATH,
   limit: nil,
   max_items: 60,
-  dry_run: false
+  dry_run: false,
+  base_time: nil
 }
 
 parser = OptionParser.new do |opts|
@@ -321,6 +356,7 @@ parser = OptionParser.new do |opts|
   opts.on("--state PATH", "Path to match-news-state.json (default: #{DEFAULT_STATE_PATH})") { |v| options[:state_path] = v }
   opts.on("--limit N", Integer, "Limit number of pages generated") { |v| options[:limit] = v }
   opts.on("--max-items N", Integer, "Max items kept in homepage/latest lists (default: 60)") { |v| options[:max_items] = v }
+  opts.on("--base-time ISO8601", "Required base time used for exact 48-72h filtering") { |v| options[:base_time] = v }
   opts.on("--dry-run", "Print actions only") { options[:dry_run] = true }
   opts.on("-h", "--help", "Show help") { usage_and_exit(opts, code: 0) }
 end
@@ -335,19 +371,28 @@ end
 state_path = options[:state_path]
 usage_and_exit(parser) unless File.exist?(state_path)
 
+puts "Rules preflight:"
+announce_rule_docs
+base_time = required_base_time(options[:base_time])
+
 state = JSON.parse(File.read(state_path))
 candidates = state["next_recommended_candidates"] || []
 
 missing = candidates.select do |c|
   slug = c["slug"]
   dir = File.join(MATCH_DIR, slug)
-  !Dir.exist?(dir)
+  next false if Dir.exist?(dir)
+
+  kickoff = Time.parse(c.fetch("kickoff_local")) rescue nil
+  next false unless kickoff
+
+  in_exact_window?(kickoff, base_time)
 end
 
 missing = missing.first(options[:limit]) if options[:limit]
 
 if missing.empty?
-  puts "No missing candidates to generate."
+  puts "No missing candidates to generate inside exact 48-72 hour window."
   exit(0)
 end
 
@@ -390,8 +435,9 @@ if options[:dry_run]
   puts "[dry-run] update homepage + latest lists (#{generated.length} new)"
   puts "[dry-run] update sitemap.xml (#{generated.length} new)"
 else
-  update_latest_lists(REPO_ROOT, generated, max_items: options[:max_items])
-  update_sitemap(REPO_ROOT, generated.map { |e| e[:slug] }, lastmod: Time.now.strftime("%Y-%m-%d"))
+  page_updated_date = base_time.strftime("%Y-%m-%d")
+  update_latest_lists(REPO_ROOT, generated, max_items: options[:max_items], page_updated_date: page_updated_date)
+  update_sitemap(REPO_ROOT, generated.map { |e| e[:slug] }, lastmod: page_updated_date)
 end
 
 puts "Generated #{generated.length} page(s):"
