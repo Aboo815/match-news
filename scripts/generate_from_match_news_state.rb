@@ -7,7 +7,7 @@ require "fileutils"
 require "optparse"
 require "digest"
 
-DEFAULT_STATE_PATH = "/Users/aboo/Desktop/7-day-first-google-click/state/match-news-state.json"
+DEFAULT_STATE_PATH = "/Users/aboo/footballant/7-day-first-google-click/state/match-news-state.json"
 REPO_ROOT = File.expand_path("..", __dir__)
 PROJECT_ROOT = File.expand_path("../..", __dir__)
 PROJECT_RULES_PATH = File.join(PROJECT_ROOT, "PROJECT_RULES.md")
@@ -270,6 +270,22 @@ def build_list_items(candidates, href_prefix:, position_start: 1)
   end.join("\n")
 end
 
+def existing_entry_for_slug(slug)
+  path = File.join(MATCH_DIR, slug, "index.html")
+  return nil unless File.exist?(path)
+
+  html = read_file(path)
+  title = html[/<title>(.*?)<\/title>/m, 1].to_s.strip
+  league = html[%r{<li><strong>Competition:</strong>\s*([^<]+)</li>}m, 1].to_s.strip
+  return nil if title.empty?
+
+  {
+    slug: slug,
+    title: title,
+    league: league.empty? ? "football" : league
+  }
+end
+
 def update_latest_lists(repo_root, new_entries, max_items:, page_updated_date:)
   home_path = File.join(repo_root, "index.html")
   latest_path = File.join(repo_root, "latest-football-lineup-predictions", "index.html")
@@ -292,11 +308,11 @@ def update_latest_lists(repo_root, new_entries, max_items:, page_updated_date:)
   by_slug = new_entries.each_with_object({}) { |e, acc| acc[e[:slug]] = e }
 
   merged_home_entries = merged_home.map do |slug|
-    by_slug[slug] || { slug: slug, title: slug.tr("-", " ").gsub(/\bvs\b/i, "vs"), league: "football" }
+    by_slug[slug] || existing_entry_for_slug(slug) || { slug: slug, title: slug.tr("-", " ").gsub(/\bvs\b/i, "vs"), league: "football" }
   end
 
   merged_latest_entries = merged_latest.map do |slug|
-    by_slug[slug] || { slug: slug, title: slug.tr("-", " ").gsub(/\bvs\b/i, "vs"), league: "football" }
+    by_slug[slug] || existing_entry_for_slug(slug) || { slug: slug, title: slug.tr("-", " ").gsub(/\bvs\b/i, "vs"), league: "football" }
   end
 
   home_items = build_list_items(merged_home_entries, href_prefix: "matches/")
