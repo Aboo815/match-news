@@ -18,6 +18,12 @@ from bs4 import BeautifulSoup
 from PIL import Image, ImageDraw, ImageFont
 
 SITE = "https://www.footballant.com/match-news"
+BIG_MATCH_TERMS = [
+    "Arsenal", "Chelsea", "Liverpool", "Manchester", "Tottenham", "West Ham", "Newcastle",
+    "Real Madrid", "Barcelona", "Atletico", "Bayern", "Dortmund", "Paris Saint-Germain",
+    "PSG", "Inter Milan", "AC Milan", "Juventus", "Roma", "Lazio", "Napoli", "Benfica",
+    "Sporting CP", "Porto", "Celtic", "Rangers",
+]
 
 
 def clean(text: str) -> str:
@@ -28,6 +34,14 @@ def short_title(title: str) -> str:
     title = clean(title)
     title = re.sub(r"\s+(lineups|predicted lineup|predicted XI).*", "", title, flags=re.I)
     return title[:92]
+
+
+def public_pick(rows: list[dict], fallback_idx: int = 0) -> dict:
+    for row in rows:
+        title = row.get("Match", "")
+        if any(term.lower() in title.lower() for term in BIG_MATCH_TERMS):
+            return row
+    return rows[fallback_idx] if rows else {}
 
 
 def extract_table(path: Path, limit: int = 12) -> list[dict]:
@@ -52,13 +66,13 @@ def extract_table(path: Path, limit: int = 12) -> list[dict]:
     return rows
 
 
-def extract_fortune(path: Path, limit: int = 12) -> list[dict]:
+def extract_chaos(path: Path, limit: int = 12) -> list[dict]:
     soup = BeautifulSoup(path.read_text(errors="ignore"), "html.parser")
     text_lines = [clean(x) for x in soup.get_text("\n").splitlines() if clean(x)]
     rows = []
     for i, line in enumerate(text_lines):
-        if "Match fortune:" in line and i > 0:
-            rows.append({"Match": text_lines[i - 1], "Fortune": line, "url": f"{SITE}/match-fortune-today/"})
+        if "Chaos read:" in line and i > 0:
+            rows.append({"Match": text_lines[i - 1], "Chaos": line, "url": f"{SITE}/match-fortune-today/"})
         if len(rows) >= limit:
             break
     return rows
@@ -126,56 +140,61 @@ def build_pack(root: Path, out: Path) -> None:
     today = dt.datetime.now(dt.timezone(dt.timedelta(hours=8))).strftime("%Y-%m-%d")
     stable = extract_table(root / "todays-most-stable-matches/index.html", 10)
     mood = extract_table(root / "fan-mood-index/index.html", 10)
-    fortune = extract_fortune(root / "match-fortune-today/index.html", 10)
+    chaos = extract_chaos(root / "match-fortune-today/index.html", 10)
 
     out.mkdir(parents=True, exist_ok=True)
     cards = out / "cards"
-    card(cards / "stable-matches.png", "Today’s Most Stable Matches", "Low-drama lineup reads from FootballAnt Match Signals.", [short_title(x.get("Match", "")) + f" · {x.get('Stable Index','')}" for x in stable])
-    card(cards / "fan-mood-index.png", "Fan Mood Index", "A football mood proxy based on source activity and match signals — not a fan poll.", [short_title(x.get("Match", "")) + f" · {x.get('Mood','')}" for x in mood], accent=(255, 197, 92))
-    card(cards / "match-fortune.png", "Match Fortune Today", "A light football signal board for matches that feel stable, risky or chaotic.", [short_title(x.get("Match", "")) for x in fortune], accent=(143, 123, 255))
+    card(cards / "lineup-clarity.png", "Lineup Clarity Board", "Who looks clear — and who still smells like lineup panic?", [short_title(x.get("Match", "")) + f" · {x.get('Read','')}" for x in stable])
+    card(cards / "fan-mood-index.png", "Fan Mood Index", "Pre-match confidence, pressure and panic — signal-based, not a poll.", [short_title(x.get("Match", "")) + f" · {x.get('Social read','')}" for x in mood], accent=(255, 197, 92))
+    card(cards / "chaos-match-watch.png", "Chaos Match Watch", "Trap-game alerts, rotation anxiety and late-drama energy.", [short_title(x.get("Match", "")) for x in chaos], accent=(143, 123, 255))
 
-    hero = mood[0] if mood else stable[0]
+    hero = public_pick(mood) or (stable[0] if stable else {})
+    clarity_item = public_pick(stable)
+    chaos_item = public_pick(chaos)
     hero_match = short_title(hero.get("Match", "Liverpool vs Chelsea"))
-    stable_match = short_title(stable[0].get("Match", "today’s most stable match")) if stable else "today’s most stable match"
-    fortune_match = short_title(fortune[0].get("Match", "today’s chaos watch")) if fortune else "today’s chaos watch"
+    clarity_match = short_title(clarity_item.get("Match", "today’s least messy lineup read")) if clarity_item else "today’s least messy lineup read"
+    clarity_read = clarity_item.get("Read", "Watch late team news") if clarity_item else "Watch late team news"
+    chaos_match = short_title(chaos_item.get("Match", "today’s chaos watch")) if chaos_item else "today’s chaos watch"
+    chaos_read = chaos_item.get("Chaos", "Chaos read") if chaos_item else "Chaos read"
+    hero_mood = hero.get("Social read", hero.get("Mood", "Nervous confidence"))
 
     x_posts = [
-        f"{hero_match} has one of today’s stronger FootballAnt mood reads.\n\nMood: {hero.get('Mood','Confident')}\nMarket confidence: {hero.get('Market Confidence','High')}\nInjury pressure: {hero.get('Injury Pressure','Medium')}\n\nFull Fan Mood board: {SITE}/fan-mood-index/",
-        f"Today’s low-drama board is live.\n\nMost stable signal: {stable_match}\n\nThis is based on lineup certainty, injury pressure and volatility watch — not betting advice.\n{SITE}/todays-most-stable-matches/",
-        f"Some matches don’t need a bold score prediction. They need a risk label.\n\nFootballAnt Match Signals tracks rotation risk, injury pressure, market confidence and lineup certainty before kickoff.\n{SITE}/",
-        f"Match Fortune Today is live: a lighter way to scan which fixtures feel stable, risky or chaotic.\n\nFirst watch: {fortune_match}\n{SITE}/match-fortune-today/",
-        "Prediction pages are easy to copy. Signal boards are harder.\n\nFootballAnt is moving toward match intelligence: lineup certainty, injury pressure, market watch and fan mood in one place.\n" + SITE + "/",
+        f"{hero_match}: {hero_mood}.\n\nThat’s the read. Not a fake fan poll — a signal-driven mood check from injuries, attention and lineup uncertainty.\n\n{SITE}/fan-mood-index/",
+        f"I don’t trust a match until the XI is clear.\n\nToday’s least messy lineup read: {clarity_match}\nSignal: {clarity_read}\n\nLineup clarity board: {SITE}/todays-most-stable-matches/",
+        f"Some games don’t need another 2-1 prediction. They need a panic meter.\n\nRotation risk. Injury tension. Late team-news chaos.\n\nFootballAnt Match Signals: {SITE}/",
+        f"Chaos Match Watch is live.\n\nFirst game that smells unstable: {chaos_match}\n{chaos_read}\n\nThis is the pre-match layer most prediction pages skip.\n{SITE}/match-fortune-today/",
+        "Football internet has enough score predictions.\n\nWe’re more interested in the weird stuff before kickoff:\n- lineup panic\n- trap-game energy\n- injury tension\n- fans pretending to be calm\n\n" + SITE + "/",
     ]
 
     comments = [
-        "The key here isn’t just the score prediction — it’s lineup certainty. If that stays low, I’d treat the whole match read as unstable.",
-        "This has chaos-match energy: injury pressure plus uncertain rotation usually matters more than the headline prediction.",
-        "I’d look less at the final score pick and more at whether the expected XI is actually stable. Late team news can flip this kind of match.",
-        "Interesting matchup, but the risk signal is availability. If the injury pressure is medium/high, the prediction should stay cautious.",
-        "This feels like one of those games where fan confidence and lineup certainty move in opposite directions. Fun, but risky to read early.",
-        "For me the useful question is: stable match or chaos match? This one looks closer to chaos unless the XI gets clearer before kickoff.",
-        "The match mood is confident, but I’d still watch rotation risk. A good-looking fixture can get messy fast when the lineup is uncertain.",
-        "Not every preview needs another 2-1 prediction. The better signal is whether injuries, rotation and media attention are all pointing the same way.",
+        "I don’t trust this one until the XI is clearer. Feels like a lineup panic game, not a clean prediction game.",
+        "This has trap-game smell. Not because of the scoreline — because the pre-match signals look messy.",
+        "Fans are pretending to be calm here. The lineup uncertainty says otherwise.",
+        "This is exactly the kind of match where a normal prediction ages badly after team news drops.",
+        "Rotation roulette tonight. I’d wait for the XI before sounding confident.",
+        "Feels less like ‘who wins?’ and more like ‘how chaotic does this get?’",
+        "The injury tension is the story here. Score predictions are secondary until availability is clearer.",
+        "Nobody needs another confident 2-1 take. This one needs a panic meter.",
     ]
 
     telegram = [
-        f"⚽ FootballAnt Signals\n\nToday’s Most Stable Matches is live.\nTop watch: {stable_match}\n\nUse it as a pre-match stability board, not a betting tip.\n{SITE}/todays-most-stable-matches/",
-        f"📊 Fan Mood Index\n\nTop mood read: {hero_match}\nMood: {hero.get('Mood','Confident')}\nMarket confidence: {hero.get('Market Confidence','High')}\nInjury pressure: {hero.get('Injury Pressure','Medium')}\n\n{SITE}/fan-mood-index/",
-        f"🔮 Match Fortune Today\n\nLightweight football signal board: stable, risky or chaotic match moods.\nWatch: {fortune_match}\n\n{SITE}/match-fortune-today/",
+        f"⚽ FootballAnt Signals\n\nLineup Clarity Board is live.\nLeast messy read: {clarity_match}\nSignal: {clarity_read}\n\nUseful before kickoff because team news ruins lazy predictions.\n{SITE}/todays-most-stable-matches/",
+        f"📊 Fan Mood Index\n\n{hero_match}: {hero_mood}\nInjury tension: {hero.get('Injury Tension', hero.get('Injury Pressure','Medium'))}\n\nSignal-based mood proxy, not a fan poll.\n{SITE}/fan-mood-index/",
+        f"🌪 Chaos Match Watch\n\nToday’s first trap-game smell: {chaos_match}\n{chaos_read}\n\nRotation anxiety, injury tension and late-drama energy in one board.\n{SITE}/match-fortune-today/",
     ]
 
     reddit_prompts = [
         f"For {hero_match}, would you trust the predicted XI yet, or is availability still the main swing factor?",
-        "Do you usually care more about score predictions or lineup certainty before kickoff? I’m starting to think lineup certainty is the cleaner signal.",
-        "Which match today feels most likely to turn chaotic because of rotation/injury pressure rather than tactics?",
-        f"{stable_match} looks relatively stable on pre-match signals. Fans of either side: does that match what you’re seeing?",
-        "Question for club fans: what is the earliest source you trust for lineup/injury confidence before the official XI drops?",
+        "What do you trust more before kickoff: score predictions or lineup clarity?",
+        "Which match today has the strongest chaos/trap-game energy because of rotation or injuries?",
+        f"{clarity_match} looks like one of the less messy lineup reads today. Fans of either side: fair or completely wrong?",
+        "Question for club fans: what is the earliest source you actually trust for lineup/injury confidence before the official XI drops?",
     ]
 
     shorts = [
-        f"Hook: One match today looks calmer than the rest.\nVisual: Stable Matches card.\nScript: 'Before kickoff, not every game is chaos. FootballAnt’s stability board flags {stable_match} as one of today’s cleaner reads based on lineup certainty, injury pressure and volatility watch.'",
-        f"Hook: This match has fan mood energy.\nVisual: Fan Mood card.\nScript: '{hero_match}: mood looks {hero.get('Mood','confident').lower()}, but injury pressure still matters. This is why we track mood and risk separately.'",
-        f"Hook: Match fortune says be careful.\nVisual: Fortune card.\nScript: '{fortune_match} gets a high-risk mood on FootballAnt. Not a betting tip — just a quick way to spot which fixtures feel messy before kickoff.'",
+        f"Hook: One match today actually looks readable.\nVisual: Lineup Clarity card.\nScript: 'Before kickoff, most predictions are guessing. {clarity_match} looks like one of today’s less messy lineup reads — {clarity_read.lower()}, not blind confidence.'",
+        f"Hook: Fans are pretending to be calm.\nVisual: Fan Mood card.\nScript: '{hero_match}: {hero_mood.lower()}. That is not a fan poll — it is a signal read from injuries, attention and lineup pressure.'",
+        f"Hook: This one smells chaotic.\nVisual: Chaos Watch card.\nScript: '{chaos_match} has trap-game energy: rotation anxiety, injury tension and late team-news chaos. This is the stuff score predictions usually hide.'",
     ]
 
     index = {
@@ -184,11 +203,11 @@ def build_pack(root: Path, out: Path) -> None:
         "source_root": str(root),
         "policy": "review-only; do not post externally without approval; no fake fan polls, no betting advice, no invented sources",
         "links": {
-            "stable": f"{SITE}/todays-most-stable-matches/",
+            "lineup_clarity": f"{SITE}/todays-most-stable-matches/",
             "mood": f"{SITE}/fan-mood-index/",
-            "fortune": f"{SITE}/match-fortune-today/",
+            "chaos": f"{SITE}/match-fortune-today/",
         },
-        "top_items": {"stable": stable[:5], "mood": mood[:5], "fortune": fortune[:5]},
+        "top_items": {"lineup_clarity": stable[:5], "mood": mood[:5], "chaos": chaos[:5]},
         "x_posts": x_posts,
         "comments": comments,
         "telegram": telegram,

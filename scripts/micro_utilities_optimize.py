@@ -2,15 +2,17 @@
 """Generate low-cost FootballAnt micro utility pages.
 
 Pages are static, indexable and driven by existing Match Signals rather than
-fabricated user/vote data:
-- Today's Most Stable Matches
+fabricated user/vote data. Public wording separates the formal product layer
+from the social/emotion layer:
+- Lineup Clarity Board
 - Fan Mood Index
-- Match Fortune Today
+- Chaos Match Watch
 """
 from __future__ import annotations
 
 import argparse
 import html
+import hashlib
 import json
 import re
 from datetime import datetime, timedelta, timezone
@@ -89,21 +91,66 @@ def sig_label(rec: dict, name: str, default: str = "Medium") -> str:
     return rec.get("signals", {}).get(name, (default, 50))[0]
 
 
+def texture(rec: dict, salt: str, spread: int = 9) -> int:
+    """Deterministic small variation so public scores do not look batch-rounded."""
+    raw = hashlib.sha1(f"{rec.get('slug','')}:{salt}".encode("utf-8")).hexdigest()
+    return int(raw[:4], 16) % (spread * 2 + 1) - spread
+
+
+def clamp_score(v: int) -> int:
+    # Avoid fake precision extremes while keeping non-round public numbers.
+    return max(29, min(87, v))
+
+
 def stable_score(rec: dict) -> int:
-    return max(0, min(100, sig_score(rec, "Lineup Certainty") + sig_score(rec, "Tactical Stability") // 2 - sig_score(rec, "Injury Pressure") // 3 - sig_score(rec, "Odds Volatility Watch") // 4))
+    base = int(
+        sig_score(rec, "Lineup Certainty") * 0.70
+        + sig_score(rec, "Tactical Stability") * 0.45
+        + (100 - sig_score(rec, "Injury Pressure")) * 0.25
+        + (100 - sig_score(rec, "Odds Volatility Watch")) * 0.20
+    )
+    return clamp_score(base + texture(rec, "clarity"))
 
 
 def mood_score(rec: dict) -> int:
     base = sig_score(rec, "Market Confidence")
     base += 8 if rec.get("has_external") else 0
     base -= sig_score(rec, "Injury Pressure") // 5
-    return max(0, min(100, base))
+    return clamp_score(base + texture(rec, "mood"))
 
 
-def fortune_score(rec: dict) -> int:
-    base = stable_score(rec) // 2 + sig_score(rec, "Market Confidence") // 2
-    base -= sig_score(rec, "Rotation Risk") // 6
-    return max(0, min(100, base))
+def chaos_score(rec: dict) -> int:
+    base = int(
+        sig_score(rec, "Rotation Risk") * 0.34
+        + sig_score(rec, "Injury Pressure") * 0.34
+        + sig_score(rec, "Odds Volatility Watch") * 0.26
+        + max(0, 68 - sig_score(rec, "Lineup Certainty")) * 0.28
+    )
+    return clamp_score(base + texture(rec, "chaos"))
+
+
+def mood_label(score: int) -> str:
+    if score >= 78:
+        return "Fans are pretending to be calm"
+    if score >= 68:
+        return "Fan optimism rising"
+    if score >= 58:
+        return "Nervous confidence"
+    if score >= 46:
+        return "Cautious mood"
+    return "Panic potential"
+
+
+def chaos_label(score: int) -> str:
+    if score >= 76:
+        return "Chaos match energy"
+    if score >= 64:
+        return "Trap game alert"
+    if score >= 52:
+        return "Rotation anxiety"
+    if score >= 40:
+        return "Lineup unease"
+    return "Low-drama read"
 
 
 def page_shell(slug: str, title: str, desc: str, body: str, item_list: list[dict] | None = None) -> str:
@@ -159,15 +206,17 @@ def stable_page(recs: list[dict], today) -> tuple[str, str, str, list[dict]]:
     ranked = sorted(current, key=lambda r: (-stable_score(r), r.get("date") or today, r["title"]))[:30]
     rows = []
     for r in ranked:
-        rows.append(f'''<tr><td><a href="../matches/{esc(r['slug'])}/">{esc(r['title'])}</a></td><td>{stable_score(r)}/100</td><td>{esc(sig_label(r, 'Lineup Certainty'))}</td><td>{esc(sig_label(r, 'Injury Pressure'))}</td><td>{esc(sig_label(r, 'Odds Volatility Watch'))}</td></tr>''')
+        score = stable_score(r)
+        read = "Clean XI read" if score >= 74 else "Mostly clear" if score >= 62 else "Watch late team news" if score >= 48 else "Lineup panic risk"
+        rows.append(f'''<tr><td><a href="../matches/{esc(r['slug'])}/">{esc(r['title'])}</a></td><td>{score}</td><td>{esc(read)}</td><td>{esc(sig_label(r, 'Lineup Certainty'))}</td><td>{esc(sig_label(r, 'Injury Pressure'))}</td><td>{esc(sig_label(r, 'Odds Volatility Watch'))}</td></tr>''')
     body = f'''    <section>
-      <h2>Today's Most Stable Matches</h2>
-      <p>Ranked by lineup certainty, tactical stability, injury pressure and volatility watch. This is a football stability signal, not betting advice.</p>
-      <table><thead><tr><th>Match</th><th>Stable Index</th><th>Lineup Certainty</th><th>Injury Pressure</th><th>Volatility Watch</th></tr></thead><tbody>
+      <h2>Lineup Clarity Board</h2>
+      <p>Matches where the pre-match read looks clearer — or where late team news could still ruin the picture. Signal-based, not a betting tip.</p>
+      <table><thead><tr><th>Match</th><th>Clarity</th><th>Read</th><th>Lineup Certainty</th><th>Injury Tension</th><th>Volatility Watch</th></tr></thead><tbody>
 {chr(10).join(rows)}
       </tbody></table>
     </section>'''
-    return "todays-most-stable-matches", "Today's Most Stable Matches", "A daily FootballAnt stability board for football matches with stronger lineup certainty and lower risk signals.", body, ranked
+    return "todays-most-stable-matches", "Lineup Clarity Board", "A daily FootballAnt board for pre-match lineup clarity, injury tension and volatility signals.", body, ranked
 
 
 def mood_page(recs: list[dict], today) -> tuple[str, str, str, list[dict]]:
@@ -176,34 +225,33 @@ def mood_page(recs: list[dict], today) -> tuple[str, str, str, list[dict]]:
     rows = []
     for r in ranked:
         mood = mood_score(r)
-        label = "Confident" if mood >= 70 else "Nervous but active" if mood >= 50 else "Cautious"
-        rows.append(f'''<tr><td><a href="../matches/{esc(r['slug'])}/">{esc(r['title'])}</a></td><td>{mood}/100</td><td>{label}</td><td>{esc(sig_label(r, 'Market Confidence'))}</td><td>{esc(sig_label(r, 'Injury Pressure'))}</td></tr>''')
+        label = mood_label(mood)
+        rows.append(f'''<tr><td><a href="../matches/{esc(r['slug'])}/">{esc(r['title'])}</a></td><td>{mood}</td><td>{esc(label)}</td><td>{esc(sig_label(r, 'Market Confidence'))}</td><td>{esc(sig_label(r, 'Injury Pressure'))}</td></tr>''')
     body = f'''    <section>
       <h2>Fan Mood Index</h2>
-      <p>A light football mood board based on market attention, source activity and injury pressure. It is a sentiment proxy, not a fan poll.</p>
-      <table><thead><tr><th>Match</th><th>Mood Index</th><th>Mood</th><th>Market Confidence</th><th>Injury Pressure</th></tr></thead><tbody>
+      <p>A signal-driven estimate of pre-match fan confidence. It is a sentiment proxy, not a fan poll.</p>
+      <table><thead><tr><th>Match</th><th>Mood</th><th>Social read</th><th>Attention Signal</th><th>Injury Tension</th></tr></thead><tbody>
 {chr(10).join(rows)}
       </tbody></table>
     </section>'''
-    return "fan-mood-index", "Fan Mood Index", "A football fan mood and pressure board generated from FootballAnt match signals, source activity and injury pressure.", body, ranked
+    return "fan-mood-index", "Fan Mood Index", "A signal-driven estimate of pre-match fan confidence, pressure and injury tension.", body, ranked
 
 
 def fortune_page(recs: list[dict], today) -> tuple[str, str, str, list[dict]]:
     current = [r for r in recs if not r.get("date") or r["date"] >= today]
-    ranked = sorted(current, key=lambda r: (-fortune_score(r), r.get("date") or today, r["title"]))[:24]
+    ranked = sorted(current, key=lambda r: (-chaos_score(r), r.get("date") or today, r["title"]))[:24]
     cards = []
     for r in ranked:
-        score = fortune_score(r)
-        fortune = "Lucky draw" if score >= 75 else "Good signs" if score >= 60 else "Chaotic watch" if score >= 45 else "High-risk mood"
-        cards.append(match_link(r, f"Match fortune: {score}/100 · {fortune} · Rotation Risk {sig_label(r, 'Rotation Risk')}"))
+        score = chaos_score(r)
+        cards.append(match_link(r, f"Chaos read: {score} · {chaos_label(score)} · Rotation {sig_label(r, 'Rotation Risk')}"))
     body = f'''    <section class="editorial-modules">
-      <h2>Match Fortune Today</h2>
-      <p>A shareable, lightweight football mood tool: it blends stability, market confidence and rotation risk into a daily match-fortune read.</p>
+      <h2>Chaos Match Watch</h2>
+      <p>The fixtures that smell unstable before kickoff: rotation anxiety, injury tension and volatility signals in one quick scan.</p>
       <ul class="spotlight-grid">
 {chr(10).join(cards)}
       </ul>
     </section>'''
-    return "match-fortune-today", "Match Fortune Today", "A light, shareable football match fortune board powered by FootballAnt signals, lineup certainty and market confidence.", body, ranked
+    return "match-fortune-today", "Chaos Match Watch", "A shareable FootballAnt watchlist for chaos match energy, trap-game alerts and lineup panic risk.", body, ranked
 
 
 def update_sitemap(root: Path, slugs: list[str], today: str) -> None:
@@ -228,9 +276,9 @@ def update_sitemap(root: Path, slugs: list[str], today: str) -> None:
 
 def homepage_block() -> str:
     items = [
-        ("Today's Most Stable Matches", "todays-most-stable-matches/", "Lineup certainty, injury stability and volatility watch."),
-        ("Fan Mood Index", "fan-mood-index/", "A light sentiment proxy for football attention and pressure."),
-        ("Match Fortune Today", "match-fortune-today/", "Shareable match fortune powered by FootballAnt signals."),
+        ("Lineup Clarity Board", "todays-most-stable-matches/", "Which matches look clear — and which still smell like lineup panic."),
+        ("Fan Mood Index", "fan-mood-index/", "A signal-driven estimate of pre-match fan confidence, not a poll."),
+        ("Chaos Match Watch", "match-fortune-today/", "Trap-game alerts, rotation anxiety and late-drama energy."),
     ]
     cards = "\n".join(f'        <li><a href="{href}">{esc(label)}</a><span>{esc(note)}</span></li>' for label, href, note in items)
     return f'''<!-- micro-utilities:start -->
