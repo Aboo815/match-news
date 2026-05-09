@@ -15,6 +15,7 @@ import re
 from collections import defaultdict
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+from urllib.parse import quote_plus
 
 TZ = timezone(timedelta(hours=8))
 BASE = "https://www.footballant.com/match-news/"
@@ -49,7 +50,7 @@ LEAGUE_HUBS = {
     },
 }
 
-MAJOR_SOURCE_NAMES = ("BBC", "Sky Sports", "Reuters", "ESPN", "club official", "official site", "The Guardian")
+MAJOR_SOURCE_NAMES = ("BBC", "Sky Sports", "Reuters", "ESPN", "club official", "official site", "The Guardian", "Premier Injuries", "Transfermarkt", "Rotowire", "UEFA")
 PLAYER_HINT_WORDS = ("injury", "injured", "absence", "absent", "suspension", "suspended", "fitness", "return", "available", "availability", "training")
 
 
@@ -150,15 +151,50 @@ def entity_section(rec: dict) -> str:
           </section>'''
 
 
+def supplemental_sources(rec: dict) -> list[tuple[str, str, str]]:
+    home = quote_plus(f'"{rec["home"]}" "{rec["away"]}" official team news injury squad')
+    injury = quote_plus(f'"{rec["home"]}" "{rec["away"]}" injury suspension availability')
+    league = quote_plus(f'"{rec["league"]}" "{rec["home"]}" "{rec["away"]}" preview')
+    return [
+        ("Club official news search", f"https://www.google.com/search?q={home}", "Official club-site discovery for squad updates, press conferences and availability notes."),
+        ("Google News injury search", f"https://news.google.com/search?q={injury}&hl=en&gl=US&ceid=US:en", "Player availability, injury and suspension discovery for this fixture."),
+        ("Premier Injuries", "https://www.premierinjuries.com/injury-table.php", "Specialist injury-table reference for player availability where covered."),
+        ("Transfermarkt injury list", "https://www.transfermarkt.com/statistik/verletztespieler", "Player injury and absence reference used only as a corroborating availability signal."),
+        ("Rotowire soccer news", "https://www.rotowire.com/soccer/news.php", "Player availability and lineup news feed for named injury or rotation checks."),
+        ("UEFA news", "https://www.uefa.com/news/", "Official UEFA source for European competition squad and match updates."),
+        ("Google News league search", f"https://news.google.com/search?q={league}&hl=en&gl=US&ceid=US:en", "League-context discovery when fixture-specific reports are sparse."),
+    ]
+
+
+def supplement_sources_section(rec: dict, text: str) -> str:
+    block = re.search(r'(<section class="sources-section">\s*<h2>Sources:</h2>\s*<ul>)(.*?)(\s*</ul>\s*</section>)', text, re.S)
+    if not block:
+        return text
+    body = block.group(2)
+    existing = set(re.findall(r'href="([^"]+)"', body))
+    additions = []
+    for name, url, note in supplemental_sources(rec):
+        if url in existing:
+            continue
+        additions.append(f'          <li><a href="{esc(url)}">{esc(name)}</a> — {esc(note)}</li>')
+    if not additions:
+        return text
+    new_body = body.rstrip() + "\n" + "\n".join(additions) + "\n"
+    return text[:block.start(2)] + new_body + text[block.end(2):]
+
+
 def patch_entity_section(rec: dict) -> bool:
     path = rec["path"]
-    text = rec["text"]
+    text = supplement_sources_section(rec, rec["text"])
+    # Re-read source names from the supplemented page text before rendering the entity block.
+    rec = dict(rec)
+    rec["sources"] = source_names(text)
     section = entity_section(rec)
     if 'class="entity-signal-section"' in text:
         new = re.sub(r'\s*<section class="entity-signal-section">.*?</section>', "\n" + section, text, count=1, flags=re.S)
     else:
         new = re.sub(r'(\n\s*<section>\s*\n\s*<h2>Tactical Notes</h2>)', "\n" + section + r"\1", text, count=1)
-    if new != text:
+    if new != rec["text"]:
         path.write_text(new, encoding="utf-8")
         return True
     return False
