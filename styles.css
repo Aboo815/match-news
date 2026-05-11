@@ -577,3 +577,67 @@ pre {
   }
 }
 /* MATCH_NEWS_HOME_ENGAGEMENT_END */
+
+/* MATCH_INTELLIGENCE_QUERY_RESOLUTION_START */
+.ai-answer-box,
+.last-24h-change {
+  border-left: 8px solid #0047b3;
+  background: #f8fbff;
+}
+
+.ai-answer-kicker {
+  margin: 0 0 8px;
+  color: #0047b3;
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.ai-answer-direct {
+  max-width: 900px;
+  color: var(--heading);
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.5;
+}
+
+.ai-answer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+  margin: 18px 0 0;
+}
+
+.ai-answer-grid div {
+  margin: 0;
+  padding: 14px 16px;
+  border: 1px solid var(--soft-border);
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.ai-answer-grid dt {
+  margin: 0 0 6px;
+  color: #0047b3;
+  font-size: 14px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.ai-answer-grid dd {
+  margin: 0;
+  color: var(--text-main);
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.48;
+}
+
+.last-24h-change ul {
+  padding-left: 22px;
+}
+
+.last-24h-change li {
+  font-weight: 700;
+}
+/* MATCH_INTELLIGENCE_QUERY_RESOLUTION_END */

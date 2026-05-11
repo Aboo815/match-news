@@ -69,6 +69,15 @@ def audit_file(path: Path, root: Path) -> list[str]:
             issues.append(f"{rel}: missing_jsonld")
 
     graphs = load_jsonld_graphs(html)
+    sports_events = [node for node in graphs if node.get("@type") == "SportsEvent"]
+    if is_match_page and sports_events:
+        if 'class="ai-answer-box"' not in html or "Quick Match Answer" not in html:
+            issues.append(f"{rel}: missing_ai_answer_box")
+        if 'class="last-24h-change"' not in html or "What changed in the last 24h?" not in html:
+            issues.append(f"{rel}: missing_last_24h_change_block")
+        for label in ["Match Snapshot", "Lineup Status", "Key Change", "Confidence Signal", "Last Updated", "Sources Checked", "Uncertainty Signal"]:
+            if label not in html:
+                issues.append(f"{rel}: missing_ai_answer_field:{label}")
     if is_match_page:
         news_articles = [node for node in graphs if node.get("@type") in {"NewsArticle", "Article"}]
         if not any(node.get("image") for node in news_articles):
@@ -78,7 +87,6 @@ def audit_file(path: Path, root: Path) -> list[str]:
         if not any(node.get("@type") == "ImageObject" for node in graphs):
             issues.append(f"{rel}: missing_imageobject_schema")
 
-    sports_events = [node for node in graphs if node.get("@type") == "SportsEvent"]
     for index, event in enumerate(sports_events, start=1):
         prefix = f"{rel}: SportsEvent[{index}]"
         if not event.get("name"):
