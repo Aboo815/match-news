@@ -167,6 +167,22 @@ def render_hub(kind: str, target_date, entries: list[dict], modified: datetime) 
 """
 
 
+def update_sitemap_hub_lastmods(root: Path, lastmod: str) -> None:
+    path = root / "sitemap.xml"
+    if not path.exists():
+        return
+    text = read_text(path)
+    targets = [
+        BASE_URL,
+        BASE_URL + "today-football-lineups/",
+        BASE_URL + "tomorrow-football-lineups/",
+    ]
+    for url in targets:
+        pattern = re.compile(r"(<loc>" + re.escape(url) + r"</loc>\s*<lastmod>)([^<]+)(</lastmod>)")
+        text = pattern.sub(r"\g<1>" + lastmod + r"\g<3>", text, count=1)
+    path.write_text(text, encoding="utf-8")
+
+
 def homepage_json_ld(root: Path, entries: list[dict], modified: datetime) -> None:
     path = root / "index.html"
     text = read_text(path)
@@ -199,6 +215,7 @@ def calibrate(root: Path, today, modified: datetime) -> dict:
     # Keep homepage structured data aligned with visible next-kickoff list: prefer today+, then recent fallback.
     homepage_entries = [r for r in records if r["date"] >= today][:60] or records[-60:]
     homepage_json_ld(root, homepage_entries, modified)
+    update_sitemap_hub_lastmods(root, today.isoformat())
     for kind, target, entries in (("today", today, by_today), ("tomorrow", today + timedelta(days=1), by_tomorrow)):
         out = root / f"{kind}-football-lineups" / "index.html"
         out.parent.mkdir(parents=True, exist_ok=True)
@@ -209,10 +226,10 @@ def calibrate(root: Path, today, modified: datetime) -> dict:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--root", action="append", required=True, help="publish/deploy root to calibrate")
-    parser.add_argument("--date", help="Asia/Shanghai date YYYY-MM-DD; defaults to now")
+    parser.add_argument("--date", required=True, help="Asia/Shanghai date YYYY-MM-DD; required for fail-closed time calibration")
     args = parser.parse_args()
     now = datetime.now(TZ)
-    today = datetime.strptime(args.date, "%Y-%m-%d").date() if args.date else now.date()
+    today = datetime.strptime(args.date, "%Y-%m-%d").date()
     results = [calibrate(Path(root), today, now) for root in args.root]
     print(json.dumps({"status": "ok", "generated_at": now.isoformat(), "results": results}, ensure_ascii=False, indent=2))
     return 0
