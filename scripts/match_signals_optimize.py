@@ -15,7 +15,7 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 TZ = timezone(timedelta(hours=8))
-SECTION_RE = re.compile(r'\s*<section class="match-signals-section">.*?</section>', re.S)
+SECTION_RE = re.compile(r'\s*<section class="match-signals-section"[^>]*>.*?</section>', re.S)
 HOME_RE = re.compile(r'\s*<!-- match-signals-home:start -->.*?<!-- match-signals-home:end -->', re.S)
 
 BIG_CLUBS = (
