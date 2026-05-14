@@ -13,6 +13,7 @@ import argparse
 import json
 import re
 import sys
+from html import unescape
 from pathlib import Path
 from typing import Any
 
@@ -70,6 +71,12 @@ def audit_file(path: Path, root: Path) -> list[str]:
 
     graphs = load_jsonld_graphs(html)
     sports_events = [node for node in graphs if node.get("@type") == "SportsEvent"]
+    sources_block = re.search(r'<section class="sources-section">.*?<ul>(.*?)</ul>\s*</section>', html, re.S)
+    if is_match_page and sources_block:
+        source_hrefs = [unescape(url) for url in re.findall(r'href="([^"]+)"', sources_block.group(1))]
+        duplicate_hrefs = sorted({url for url in source_hrefs if source_hrefs.count(url) > 1})
+        if duplicate_hrefs:
+            issues.append(f"{rel}: duplicate_sources_href:{len(duplicate_hrefs)}")
     if is_match_page and sports_events:
         ai_answer_count = html.count('class="ai-answer-box"')
         last_24h_count = html.count('class="last-24h-change"')

@@ -171,12 +171,14 @@ def supplement_sources_section(rec: dict, text: str) -> str:
     if not block:
         return text
     body = block.group(2)
-    existing = set(re.findall(r'href="([^"]+)"', body))
+    existing = {html.unescape(url) for url in re.findall(r'href="([^"]+)"', body)}
     additions = []
     for name, url, note in supplemental_sources(rec):
-        if url in existing:
+        normalized_url = html.unescape(url)
+        if normalized_url in existing:
             continue
         additions.append(f'          <li><a href="{esc(url)}">{esc(name)}</a> — {esc(note)}</li>')
+        existing.add(normalized_url)
     if not additions:
         return text
     new_body = body.rstrip() + "\n" + "\n".join(additions) + "\n"
