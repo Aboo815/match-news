@@ -71,10 +71,19 @@ def audit_file(path: Path, root: Path) -> list[str]:
     graphs = load_jsonld_graphs(html)
     sports_events = [node for node in graphs if node.get("@type") == "SportsEvent"]
     if is_match_page and sports_events:
-        if 'class="ai-answer-box"' not in html or "Quick Match Answer" not in html:
+        ai_answer_count = html.count('class="ai-answer-box"')
+        last_24h_count = html.count('class="last-24h-change"')
+        match_signals_count = html.count('id="match-signals-heading"')
+        if ai_answer_count == 0 or "Quick Match Answer" not in html:
             issues.append(f"{rel}: missing_ai_answer_box")
-        if 'class="last-24h-change"' not in html or "What changed in the last 24h?" not in html:
+        elif ai_answer_count > 1:
+            issues.append(f"{rel}: duplicate_ai_answer_box:{ai_answer_count}")
+        if last_24h_count == 0 or "What changed in the last 24h?" not in html:
             issues.append(f"{rel}: missing_last_24h_change_block")
+        elif last_24h_count > 1:
+            issues.append(f"{rel}: duplicate_last_24h_change_block:{last_24h_count}")
+        if match_signals_count > 1:
+            issues.append(f"{rel}: duplicate_match_signals_block:{match_signals_count}")
         for label in ["Match Snapshot", "Lineup Status", "Key Change", "Confidence Signal", "Last Updated", "Sources Checked", "Uncertainty Signal"]:
             if label not in html:
                 issues.append(f"{rel}: missing_ai_answer_field:{label}")
