@@ -85,6 +85,8 @@ def audit_file(path: Path, root: Path) -> list[str]:
             issues.append(f"{rel}: missing_ai_answer_box")
         elif ai_answer_count > 1:
             issues.append(f"{rel}: duplicate_ai_answer_box:{ai_answer_count}")
+        if 'class="ai-answer-basis"' not in html or "Answer basis:" not in html:
+            issues.append(f"{rel}: missing_ai_answer_basis")
         if last_24h_count == 0 or "What changed in the last 24h?" not in html:
             issues.append(f"{rel}: missing_last_24h_change_block")
         elif last_24h_count > 1:
