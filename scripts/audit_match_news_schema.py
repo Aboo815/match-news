@@ -113,6 +113,8 @@ def audit_file(path: Path, root: Path) -> list[str]:
             issues.append(f"{prefix} missing_startDate")
         if not event.get("description"):
             issues.append(f"{prefix} missing_description")
+        if not event.get("image"):
+            issues.append(f"{prefix} missing_image")
         location = event.get("location")
         if not isinstance(location, dict) or not location.get("name"):
             issues.append(f"{prefix} missing_location_name")
