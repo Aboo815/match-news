@@ -339,9 +339,22 @@ def update_sitemap(repo_root, slugs, lastmod:)
   insert_at = xml.rindex("</urlset>")
   raise "Could not find </urlset> in sitemap.xml" unless insert_at
 
+  [
+    "https://www.footballant.com/match-news/",
+    "https://www.footballant.com/match-news/latest-football-lineup-predictions/"
+  ].each do |loc|
+    xml = xml.sub(
+      %r{(<loc>#{Regexp.escape(loc)}</loc>\s*<lastmod>)[^<]+(</lastmod>)},
+      "\\1#{lastmod}\\2"
+    )
+  end
+
   existing = xml.scan(%r{<loc>https://www\.footballant\.com/match-news/matches/([^/]+)/</loc>}).flatten.to_h { |s| [s, true] }
   new_slugs = slugs.reject { |s| existing.key?(s) }
-  return if new_slugs.empty?
+  if new_slugs.empty?
+    write_file(path, xml)
+    return
+  end
 
   blocks = new_slugs.map do |slug|
     <<~URL
