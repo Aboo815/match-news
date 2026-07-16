@@ -2,37 +2,37 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 	  <url>
 	    <loc>https://www.footballant.com/match-news/</loc>
-	    <lastmod>2026-07-16</lastmod>
+	    <lastmod>2026-07-17</lastmod>
 	    <changefreq>daily</changefreq>
 	    <priority>1.0</priority>
 	  </url>
 	  <url>
 	    <loc>https://www.footballant.com/match-news/latest-football-lineup-predictions/</loc>
-	    <lastmod>2026-07-16</lastmod>
+	    <lastmod>2026-07-17</lastmod>
 	    <changefreq>daily</changefreq>
 	    <priority>0.9</priority>
 	  </url>
 	  <url>
 	    <loc>https://www.footballant.com/match-news/premier-league-lineup-predictions/</loc>
-	    <lastmod>2026-07-16</lastmod>
+	    <lastmod>2026-07-17</lastmod>
 	    <changefreq>daily</changefreq>
 	    <priority>0.9</priority>
 	  </url>
 	  <url>
 	    <loc>https://www.footballant.com/match-news/la-liga-lineup-predictions/</loc>
-	    <lastmod>2026-07-16</lastmod>
+	    <lastmod>2026-07-17</lastmod>
 	    <changefreq>daily</changefreq>
 	    <priority>0.9</priority>
 	  </url>
 	  <url>
 	    <loc>https://www.footballant.com/match-news/serie-a-lineup-predictions/</loc>
-	    <lastmod>2026-07-16</lastmod>
+	    <lastmod>2026-07-17</lastmod>
 	    <changefreq>daily</changefreq>
 	    <priority>0.9</priority>
 	  </url>
 	  <url>
 	    <loc>https://www.footballant.com/match-news/bundesliga-lineup-predictions/</loc>
-	    <lastmod>2026-07-16</lastmod>
+	    <lastmod>2026-07-17</lastmod>
 	    <changefreq>daily</changefreq>
 	    <priority>0.9</priority>
 	  </url>
@@ -3848,13 +3848,13 @@
 </url>
   <url>
     <loc>https://www.footballant.com/match-news/today-football-lineups/</loc>
-    <lastmod>2026-07-16</lastmod>
+    <lastmod>2026-07-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://www.footballant.com/match-news/tomorrow-football-lineups/</loc>
-    <lastmod>2026-07-16</lastmod>
+    <lastmod>2026-07-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
@@ -4616,25 +4616,25 @@
 </url>
   <url>
     <loc>https://www.footballant.com/match-news/champions-league-lineup-predictions/</loc>
-    <lastmod>2026-07-16</lastmod>
+    <lastmod>2026-07-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.footballant.com/match-news/todays-most-stable-matches/</loc>
-    <lastmod>2026-07-16</lastmod>
+    <lastmod>2026-07-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.footballant.com/match-news/fan-mood-index/</loc>
-    <lastmod>2026-07-16</lastmod>
+    <lastmod>2026-07-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.footballant.com/match-news/match-fortune-today/</loc>
-    <lastmod>2026-07-16</lastmod>
+    <lastmod>2026-07-17</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>
@@ -4694,7 +4694,7 @@
 </url>
   <url>
     <loc>https://www.footballant.com/match-news/feed.xml</loc>
-    <lastmod>2026-07-16</lastmod>
+    <lastmod>2026-07-17</lastmod>
     <changefreq>hourly</changefreq>
     <priority>0.6</priority>
   </url>
@@ -21303,6 +21303,204 @@
 <url>
   <loc>https://www.footballant.com/match-news/matches/loudoun-united-vs-tampa-bay-rowdies-lineup-2026/</loc>
   <lastmod>2026-07-16</lastmod>
+  <changefreq>daily</changefreq>
+  <priority>0.8</priority>
+</url>
+<url>
+  <loc>https://www.footballant.com/match-news/matches/america-fc-natal-rn-vs-se-do-gama-lineup-2026/</loc>
+  <lastmod>2026-07-17</lastmod>
+  <changefreq>daily</changefreq>
+  <priority>0.8</priority>
+</url>
+<url>
+  <loc>https://www.footballant.com/match-news/matches/guayaquil-city-vs-manta-fc-lineup-2026/</loc>
+  <lastmod>2026-07-17</lastmod>
+  <changefreq>daily</changefreq>
+  <priority>0.8</priority>
+</url>
+<url>
+  <loc>https://www.footballant.com/match-news/matches/spain-vs-argentina-lineup-2026/</loc>
+  <lastmod>2026-07-17</lastmod>
+  <changefreq>daily</changefreq>
+  <priority>0.8</priority>
+</url>
+<url>
+  <loc>https://www.footballant.com/match-news/matches/san-luis-quillota-vs-union-espanola-lineup-2026/</loc>
+  <lastmod>2026-07-17</lastmod>
+  <changefreq>daily</changefreq>
+  <priority>0.8</priority>
+</url>
+<url>
+  <loc>https://www.footballant.com/match-news/matches/cd-magallanes-vs-curico-unido-lineup-2026/</loc>
+  <lastmod>2026-07-17</lastmod>
+  <changefreq>daily</changefreq>
+  <priority>0.8</priority>
+</url>
+<url>
+  <loc>https://www.footballant.com/match-news/matches/deportes-santa-cruz-vs-san-marcos-de-arica-lineup-2026/</loc>
+  <lastmod>2026-07-17</lastmod>
+  <changefreq>daily</changefreq>
+  <priority>0.8</priority>
+</url>
+<url>
+  <loc>https://www.footballant.com/match-news/matches/csd-antofagasta-vs-rangers-talca-lineup-2026/</loc>
+  <lastmod>2026-07-17</lastmod>
+  <changefreq>daily</changefreq>
+  <priority>0.8</priority>
+</url>
+<url>
+  <loc>https://www.footballant.com/match-news/matches/vojvodina-novi-sad-vs-ofk-beograd-lineup-2026/</loc>
+  <lastmod>2026-07-17</lastmod>
+  <changefreq>daily</changefreq>
+  <priority>0.8</priority>
+</url>
+<url>
+  <loc>https://www.footballant.com/match-news/matches/radnik-surdulica-vs-mladost-lucani-lineup-2026/</loc>
+  <lastmod>2026-07-17</lastmod>
+  <changefreq>daily</changefreq>
+  <priority>0.8</priority>
+</url>
+<url>
+  <loc>https://www.footballant.com/match-news/matches/cukaricki-stankom-vs-imt-novi-beograd-lineup-2026/</loc>
+  <lastmod>2026-07-17</lastmod>
+  <changefreq>daily</changefreq>
+  <priority>0.8</priority>
+</url>
+<url>
+  <loc>https://www.footballant.com/match-news/matches/tecnico-universitario-vs-sociedad-deportiva-aucas-lineup-2026/</loc>
+  <lastmod>2026-07-17</lastmod>
+  <changefreq>daily</changefreq>
+  <priority>0.8</priority>
+</url>
+<url>
+  <loc>https://www.footballant.com/match-news/matches/centro-atletico-fenix-vs-ca-atenas-lineup-2026/</loc>
+  <lastmod>2026-07-17</lastmod>
+  <changefreq>daily</changefreq>
+  <priority>0.8</priority>
+</url>
+<url>
+  <loc>https://www.footballant.com/match-news/matches/petrolul-ploiesti-vs-dinamo-bucuresti-lineup-2026/</loc>
+  <lastmod>2026-07-17</lastmod>
+  <changefreq>daily</changefreq>
+  <priority>0.8</priority>
+</url>
+<url>
+  <loc>https://www.footballant.com/match-news/matches/botev-vratsa-vs-cherno-more-varna-lineup-2026/</loc>
+  <lastmod>2026-07-17</lastmod>
+  <changefreq>daily</changefreq>
+  <priority>0.8</priority>
+</url>
+<url>
+  <loc>https://www.footballant.com/match-news/matches/cerro-montevideo-vs-racing-club-montevideo-lineup-2026/</loc>
+  <lastmod>2026-07-17</lastmod>
+  <changefreq>daily</changefreq>
+  <priority>0.8</priority>
+</url>
+<url>
+  <loc>https://www.footballant.com/match-news/matches/los-chankas-vs-sport-boys-lineup-2026/</loc>
+  <lastmod>2026-07-17</lastmod>
+  <changefreq>daily</changefreq>
+  <priority>0.8</priority>
+</url>
+<url>
+  <loc>https://www.footballant.com/match-news/matches/nk-aluminij-vs-maribor-lineup-2026/</loc>
+  <lastmod>2026-07-17</lastmod>
+  <changefreq>daily</changefreq>
+  <priority>0.8</priority>
+</url>
+<url>
+  <loc>https://www.footballant.com/match-news/matches/jaro-vs-inter-turku-lineup-2026/</loc>
+  <lastmod>2026-07-17</lastmod>
+  <changefreq>daily</changefreq>
+  <priority>0.8</priority>
+</url>
+<url>
+  <loc>https://www.footballant.com/match-news/matches/hammarby-vs-degerfors-if-lineup-2026/</loc>
+  <lastmod>2026-07-17</lastmod>
+  <changefreq>daily</changefreq>
+  <priority>0.8</priority>
+</url>
+<url>
+  <loc>https://www.footballant.com/match-news/matches/halmstads-vs-hacken-lineup-2026/</loc>
+  <lastmod>2026-07-17</lastmod>
+  <changefreq>daily</changefreq>
+  <priority>0.8</priority>
+</url>
+<url>
+  <loc>https://www.footballant.com/match-news/matches/elfsborg-vs-ik-sirius-fk-lineup-2026/</loc>
+  <lastmod>2026-07-17</lastmod>
+  <changefreq>daily</changefreq>
+  <priority>0.8</priority>
+</url>
+<url>
+  <loc>https://www.footballant.com/match-news/matches/sao-luiz-rs-vs-centro-sportivo-alagoano-lineup-2026/</loc>
+  <lastmod>2026-07-17</lastmod>
+  <changefreq>daily</changefreq>
+  <priority>0.8</priority>
+</url>
+<url>
+  <loc>https://www.footballant.com/match-news/matches/universitaea-cluj-vs-farul-constanta-lineup-2026/</loc>
+  <lastmod>2026-07-17</lastmod>
+  <changefreq>daily</changefreq>
+  <priority>0.8</priority>
+</url>
+<url>
+  <loc>https://www.footballant.com/match-news/matches/central-espanol-vs-cerro-largo-lineup-2026/</loc>
+  <lastmod>2026-07-17</lastmod>
+  <changefreq>daily</changefreq>
+  <priority>0.8</priority>
+</url>
+<url>
+  <loc>https://www.footballant.com/match-news/matches/ifk-varnamo-vs-ljungskile-lineup-2026/</loc>
+  <lastmod>2026-07-17</lastmod>
+  <changefreq>daily</changefreq>
+  <priority>0.8</priority>
+</url>
+<url>
+  <loc>https://www.footballant.com/match-news/matches/nordic-united-fc-vs-orebro-lineup-2026/</loc>
+  <lastmod>2026-07-17</lastmod>
+  <changefreq>daily</changefreq>
+  <priority>0.8</priority>
+</url>
+<url>
+  <loc>https://www.footballant.com/match-news/matches/ifk-norrkoping-fk-vs-sandvikens-if-lineup-2026/</loc>
+  <lastmod>2026-07-17</lastmod>
+  <changefreq>daily</changefreq>
+  <priority>0.8</priority>
+</url>
+<url>
+  <loc>https://www.footballant.com/match-news/matches/bucheon-fc-1995-vs-fc-seoul-lineup-2026/</loc>
+  <lastmod>2026-07-17</lastmod>
+  <changefreq>daily</changefreq>
+  <priority>0.8</priority>
+</url>
+<url>
+  <loc>https://www.footballant.com/match-news/matches/fc-anyang-vs-gwangju-football-club-lineup-2026/</loc>
+  <lastmod>2026-07-17</lastmod>
+  <changefreq>daily</changefreq>
+  <priority>0.8</priority>
+</url>
+<url>
+  <loc>https://www.footballant.com/match-news/matches/yong-in-fc-vs-hwaseong-fc-lineup-2026/</loc>
+  <lastmod>2026-07-17</lastmod>
+  <changefreq>daily</changefreq>
+  <priority>0.8</priority>
+</url>
+<url>
+  <loc>https://www.footballant.com/match-news/matches/suwon-samsung-bluewings-vs-paju-frontier-fc-lineup-2026/</loc>
+  <lastmod>2026-07-17</lastmod>
+  <changefreq>daily</changefreq>
+  <priority>0.8</priority>
+</url>
+<url>
+  <loc>https://www.footballant.com/match-news/matches/gyeongnam-fc-vs-ansan-greeners-fc-lineup-2026/</loc>
+  <lastmod>2026-07-17</lastmod>
+  <changefreq>daily</changefreq>
+  <priority>0.8</priority>
+</url>
+<url>
+  <loc>https://www.footballant.com/match-news/matches/chungbuk-cheongju-vs-cheonan-city-lineup-2026/</loc>
+  <lastmod>2026-07-17</lastmod>
   <changefreq>daily</changefreq>
   <priority>0.8</priority>
 </url>
